@@ -1,11 +1,37 @@
 import Link from 'next/link'
+import router from 'next/router'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import Card from '../../components/Card'
-import { handleSubmit } from './services'
 import styles from './styles.module.css'
 
 export default function Confess() {
   const [value, setValue] = useState('');
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>,
+    data: string
+  ) => {
+    event.preventDefault();
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: data }),
+    };
+
+    try {
+      const data = await fetch(`api/confess`, requestOptions);
+
+      if (data.status === 201) {
+        router.push("/confessions");
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(JSON.stringify({ message: data }));
+      console.log(error);
+    }
+  };
 
   return (
     <Card>
@@ -13,6 +39,7 @@ export default function Confess() {
       <p className={styles.description}>
         Esta área é direcionada para escrever sua confissão, ela será postada como anônima.</p>
       <form
+        method="post"
         onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event, value)}
         className={styles.cardBody}
       >

@@ -6,23 +6,36 @@ import { useState } from 'react'
 import ReactPaginate from 'react-paginate'
 import Card from '../../components/Card'
 import Confession from '../../components/Confession'
-import { handleIndex } from './services'
 import styles from './styles.module.css'
 
 interface ConfessData {
   _id: string,
   message: string
 }
-type Response = {
+/* type ResponseData = {
   data: {
     response: ConfessData[],
     count: number
   }
-}
+} */
+
+const handleIndex = async (offset = 0) => {
+  try {
+    const data = await fetch(
+      `http://localhost:3000/api/confess?offset=${offset}`
+    );
+
+    if (data.ok && data) {
+      return data.json();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const getStaticProps: GetStaticProps = async (context) => {
 
-  const data: Response = await handleIndex();
+  const data = await handleIndex() || { response: [], count: 0 };
 
   return { props: { data } }
 }
@@ -37,7 +50,7 @@ function Confess({ data, router }: ConfessProps) {
   }
 
   const pagginationHandler = async (page: PaginationCallback) => {
-    console.log(router)
+
     const currentPath = router.pathname;
     const currentQuery = router.query;
     currentQuery.page = String(page.selected + 1);
@@ -55,12 +68,12 @@ function Confess({ data, router }: ConfessProps) {
   return (
     <Card>
       <h1 style={{ display: 'inline-block' }}>Confesse</h1>
-      <strong className={styles.numbers}>número de confissões: {data.count}</strong>
-      {message.response.map((confession: ConfessData) =>
+      <strong className={styles.numbers}>número de confissões: {data.count || 0}</strong>
+      {message ? message.response.map((confession: ConfessData) =>
         <Confession key={confession._id} message={confession.message} />
-      )}
+      ) : null}
       <ReactPaginate
-        pageCount={Math.round(data.count / 4)}
+        pageCount={Math.round(data.count / 4) || 1}
         marginPagesDisplayed={2}
         pageRangeDisplayed={5}
         nextLabel="próximo"
