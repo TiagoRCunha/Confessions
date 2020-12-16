@@ -1,0 +1,22 @@
+div.cardBody {
+  padding: 10px;
+}
+
+textarea.textArea {
+  width: 90%;
+  margin: 8px 5%;
+  resize: none;
+}
+
+p.description {
+  text-align: center;
+}
+
+span.link {
+  display: inline-block;
+  text-align: center;
+}
+
+button.button {
+  float: right;
+}

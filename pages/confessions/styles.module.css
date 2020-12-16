@@ -1,0 +1,29 @@
+div.cardBody {
+  padding: 10px;
+}
+
+span.link {
+  padding: 10px;
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+button.button {
+  float: right;
+}
+
+strong.numbers {
+  float: right;
+  font-size: 16px;
+}
+
+ul.pagination {
+  justify-content: center;
+  list-style: none;
+  display: inline-flex;
+}
+
+ul.pagination * {
+  margin: 0 5px;
+}
