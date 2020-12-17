@@ -22,6 +22,7 @@ const handleIndex = async (offset = 0) => {
     );
 
     return data.json();
+
   } catch (error) {
     console.log(error)
     return { data: { response: [], count: 0 } }
