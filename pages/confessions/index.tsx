@@ -14,35 +14,34 @@ interface ConfessData {
 }
 
 const handleIndex = async (offset = 0) => {
-  const url = process.env.API_URL || `http://localhost:3000/`
+  const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3000/`
 
   try {
     const data = await fetch(
-      `${url}api/confess?offset=${offset}`
+      `${url}/confess?offset=${offset}`
     );
 
-
-    if (data.ok && data) {
-      return data.json();
-    }
+    return data.json();
   } catch (error) {
-    console.log(error);
+    console.log(error)
+    return { data: { response: [], count: 0 } }
   }
 };
 
 const getStaticProps: GetStaticProps = async (context) => {
 
-  const data = await handleIndex() || { response: [], count: 0 };
+  const data = await handleIndex();
 
   return { props: { data } }
-}
 
+}
 
 type ConfessProps = InferGetStaticPropsType<typeof getStaticProps> & WithRouterProps
 
 function Confess({ data, router }: ConfessProps) {
 
   const [message, setMessage] = useState(data);
+  console.log(process.env.NEXT_PUBLIC_API_URL)
 
   interface PaginationCallback {
     selected: number

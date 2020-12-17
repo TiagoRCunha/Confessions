@@ -1,12 +1,13 @@
 import Link from 'next/link'
-import router from 'next/router'
+import { useRouter } from 'next/router'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import Card from '../../components/Card'
 import styles from './styles.module.css'
 
 export default function Confess() {
   const [value, setValue] = useState('');
-  const url = process.env.API_URL || "http://localhost:3000/"
+  const router = useRouter()
+  const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/"
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>,
