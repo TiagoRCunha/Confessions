@@ -6,6 +6,7 @@ import styles from './styles.module.css'
 
 export default function Confess() {
   const [value, setValue] = useState('');
+  const url = process.env.API_URL || "http://localhost:3000/"
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>,
@@ -20,7 +21,7 @@ export default function Confess() {
     };
 
     try {
-      const data = await fetch(`api/confess`, requestOptions);
+      const data = await fetch(`${url}api/confess`, requestOptions);
 
       if (data.status === 201) {
         router.push("/confessions");

@@ -12,18 +12,15 @@ interface ConfessData {
   _id: string,
   message: string
 }
-/* type ResponseData = {
-  data: {
-    response: ConfessData[],
-    count: number
-  }
-} */
 
 const handleIndex = async (offset = 0) => {
+  const url = process.env.API_URL || `http://localhost:3000/`
+
   try {
     const data = await fetch(
-      `http://localhost:3000/api/confess?offset=${offset}`
+      `${url}api/confess?offset=${offset}`
     );
+
 
     if (data.ok && data) {
       return data.json();
@@ -33,16 +30,18 @@ const handleIndex = async (offset = 0) => {
   }
 };
 
-export const getStaticProps: GetStaticProps = async (context) => {
+const getStaticProps: GetStaticProps = async (context) => {
 
   const data = await handleIndex() || { response: [], count: 0 };
 
   return { props: { data } }
 }
 
+
 type ConfessProps = InferGetStaticPropsType<typeof getStaticProps> & WithRouterProps
 
 function Confess({ data, router }: ConfessProps) {
+
   const [message, setMessage] = useState(data);
 
   interface PaginationCallback {
@@ -68,12 +67,12 @@ function Confess({ data, router }: ConfessProps) {
   return (
     <Card>
       <h1 style={{ display: 'inline-block' }}>Confesse</h1>
-      <strong className={styles.numbers}>número de confissões: {data.count || 0}</strong>
+      <strong className={styles.numbers}>número de confissões: {data ? data.count : 0}</strong>
       {message ? message.response.map((confession: ConfessData) =>
         <Confession key={confession._id} message={confession.message} />
       ) : null}
       <ReactPaginate
-        pageCount={Math.round(data.count / 4) || 1}
+        pageCount={data ? Math.round(data.count / 4) : 1}
         marginPagesDisplayed={2}
         pageRangeDisplayed={5}
         nextLabel="próximo"

@@ -21,8 +21,8 @@ export default function Home({
         </Link>
       </Box>
       <Box>
-        <Link href="/remember">
-          <h1 style={{ fontSize: "6vw" }}>Lembrar</h1>
+        <Link href="/confessions">
+          <h1 style={{ fontSize: "6vw" }}>Confissões</h1>
         </Link>
       </Box>
     </Layout>
