@@ -1,9 +1,9 @@
 import { GetStaticProps, InferGetStaticPropsType } from 'next'
-import { WithRouterProps } from 'next/dist/client/with-router'
 import Link from 'next/link'
-import { withRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import ReactPaginate from 'react-paginate'
+import userSWR from 'swr'
 import Card from '../../components/Card'
 import Confession from '../../components/Confession'
 import styles from './styles.module.css'
@@ -17,11 +17,12 @@ const handleIndex = async (offset = 0) => {
   const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3000/`
 
   try {
-    const data = await fetch(
-      `${url}/confess?offset=${offset}`
+    const res = await fetch(
+      `${url}api/confess?offset=${offset}`
     );
 
-    return data.json();
+    const data = await res.json()
+    return data;
 
   } catch (error) {
     console.log(error)
@@ -33,16 +34,20 @@ const getStaticProps: GetStaticProps = async (context) => {
 
   const data = await handleIndex();
 
-  return { props: { data } }
+  return { props: { staticData: data } }
 
 }
 
-type ConfessProps = InferGetStaticPropsType<typeof getStaticProps> & WithRouterProps
+type ConfessProps = InferGetStaticPropsType<typeof getStaticProps>
 
-function Confess({ data, router }: ConfessProps) {
+function Confess({ staticData }: ConfessProps) {
 
-  const [message, setMessage] = useState(data);
-  console.log(process.env.NEXT_PUBLIC_API_URL)
+  const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3000/`
+  const router = useRouter();
+  const fetcher = (...args: RequestInfo[]) => fetch(...args).then(res => res.json())
+  const { data, error } = userSWR(`${url}api/confess?offset=0`, fetcher)
+
+  const [message, setMessage] = useState(staticData || data);
 
   interface PaginationCallback {
     selected: number
@@ -54,8 +59,8 @@ function Confess({ data, router }: ConfessProps) {
     const currentQuery = router.query;
     currentQuery.page = String(page.selected + 1);
 
-    const newData = await handleIndex(4 * page.selected)
-    setMessage(newData)
+    const newData = await handleIndex(4 * page.selected);
+    setMessage(staticData || newData)
 
     router.push({
       pathname: currentPath,
@@ -70,7 +75,7 @@ function Confess({ data, router }: ConfessProps) {
       <strong className={styles.numbers}>número de confissões: {data ? data.count : 0}</strong>
       {message ? message.response.map((confession: ConfessData) =>
         <Confession key={confession._id} message={confession.message} />
-      ) : null}
+      ) : error}
       <ReactPaginate
         pageCount={data ? Math.round(data.count / 4) : 1}
         marginPagesDisplayed={2}
@@ -98,4 +103,4 @@ function Confess({ data, router }: ConfessProps) {
     </Card>)
 }
 
-export default withRouter(Confess);
+export default Confess;

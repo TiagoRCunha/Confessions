@@ -6,7 +6,7 @@ import styles from './styles.module.css'
 
 export default function Confess() {
   const [value, setValue] = useState('');
-  const router = useRouter()
+  const router = useRouter();
   const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/"
 
   const handleSubmit = async (
