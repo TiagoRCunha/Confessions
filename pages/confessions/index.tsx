@@ -44,7 +44,7 @@ function Confess({ staticData }: ConfessProps) {
 
   const url = process.env.NEXT_PUBLIC_API_URL || `http://localhost:3000/`
   const router = useRouter();
-  const fetcher = (...args: RequestInfo[]) => fetch(args[0]).then(res => res.json())
+  const fetcher = (...args: RequestInfo[]) => fetch(args[0], { headers: { "Access-Control-Allow-Origin": "*" } }).then(res => res.json())
   const { data, error } = userSWR(`${url}/confess?offset=0`, fetcher)
 
   const [message, setMessage] = useState(staticData || data);
